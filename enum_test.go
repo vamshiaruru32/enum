@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/matryer/is"
-	"github.com/orsinium-labs/enum"
+	"github.com/vamshiaruru32/enum"
 )
 
 type Color enum.Member[string]

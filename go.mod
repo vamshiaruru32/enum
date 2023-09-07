@@ -1,5 +1,5 @@
-module github.com/orsinium-labs/enum
+module github.com/vamshiaruru32/enum
 
-go 1.20
+go 1.21
 
 require github.com/matryer/is v1.4.1
