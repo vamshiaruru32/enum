@@ -9,7 +9,20 @@ import (
 
 // Member is an enum member, a specific value bound to a variable.
 type Member[T comparable] struct {
-	Value T
+	Val T
+}
+
+func MarshalJsonStr(m Member[string]) ([]byte, error) {
+	return []byte(fmt.Sprintf("%q", m.Val)), nil
+}
+
+func UnmarshalJsonStr[M iMember[string]](b []byte, e Enum[M, string]) (*M, error) {
+	val := string(b)
+	parsed := e.Parse(val)
+	if parsed == nil {
+		return nil, fmt.Errorf("invalid %s value: %q", e.TypeName(), val)
+	}
+	return parsed, nil
 }
 
 // iMember is the type constraint for Member used by Enum.
@@ -21,7 +34,7 @@ type Member[T comparable] struct {
 // We also can't use a normal interface because new types
 // don't inherit methods of their base type.
 type iMember[T comparable] interface {
-	~struct{ Value T }
+	~struct{ Val T }
 }
 
 // Enum is a collection of enum members.
@@ -77,7 +90,7 @@ func (e Enum[M, V]) Parse(value V) *M {
 
 // Value returns the wrapped value of the given enum member.
 func (e Enum[M, V]) Value(member M) V {
-	return Member[V](member).Value
+	return Member[V](member).Val
 }
 
 // Index returns the index of the given member in the enum.
@@ -114,7 +127,7 @@ func (e Enum[M, V]) Choice(seed int64) *M {
 	}
 	// nolint: gosec
 	r := rand.New(rand.NewSource(seed))
-	return &(e.members[r.Intn(lenMembers)])
+	return &e.members[r.Intn(lenMembers)]
 }
 
 // Values returns a slice of values of all members of the enum.

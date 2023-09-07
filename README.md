@@ -1,3 +1,8 @@
+# DIFFERENCE FROM MASTER BRANCH
+Original branch has `Value` as the enum Member field. But that conflicts with Value() method required by Sql driver.
+So this one just renames it to `Val`.
+Also adds MarshalJsonStr and UnmarshalJsonStr helper methods.
+
 # enum
 
 [ [📄 docs](https://pkg.go.dev/github.com/orsinium-labs/enum) ] [ [🐙 github](https://github.com/orsinium-labs/enum) ] [ [❤️ sponsor](https://github.com/sponsors/orsinium) ]
@@ -108,7 +113,7 @@ var (
   Colors = enum.New(Red, Green, Blue)
 )
 
-fmt.Println(Red.Value.UI)
+fmt.Println(Red.Val.UI)
 ```
 
 If the enum has lots of members and new ones may be added over time, it's easy to forget to register all members in the enum. To prevent this, use enum.Builder to define an enum:

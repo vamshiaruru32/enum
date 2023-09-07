@@ -60,7 +60,7 @@ func ExampleEnum_Parse() {
 
 	parsed := Colors.Parse("red")
 	fmt.Printf("%#v\n", parsed)
-	// Output: &enum_test.Color{Value:"red"}
+	// Output: &enum_test.Color{Val:"red"}
 }
 
 func ExampleEnum_Contains() {
