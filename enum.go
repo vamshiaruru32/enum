@@ -1,3 +1,5 @@
+// Copied from  https://github.com/orsinium-labs/enum and modified to support marshalling and changed Value to Val to support
+// sql drivers.
 package enum
 
 import (
@@ -12,17 +14,38 @@ type Member[T comparable] struct {
 	Val T
 }
 
-func MarshalJsonStr(m Member[string]) ([]byte, error) {
-	return []byte(fmt.Sprintf("%q", m.Val)), nil
+func MarshalJsonStr(m string) ([]byte, error) {
+	return []byte(fmt.Sprintf("%q", m)), nil
 }
 
-func UnmarshalJsonStr[M iMember[string]](b []byte, e Enum[M, string]) (*M, error) {
-	val := string(b)
-	parsed := e.Parse(val)
+func UnmarshalJsonStr[M iMember[string]](b []byte, e Enum[M, string], p *M) error {
+	v := strings.Trim(string(b), `"`)
+	parsed := e.Parse(v)
 	if parsed == nil {
-		return nil, fmt.Errorf("invalid %s value: %q", e.TypeName(), val)
+		return fmt.Errorf("invalid EcommPlatform value: %q", v)
 	}
-	return parsed, nil
+	*p = *parsed
+	return nil
+}
+
+func ScanStr[M iMember[string]](src any, e Enum[M, string], p *M) error {
+	switch v := src.(type) {
+	case string:
+		parsed := e.Parse(v)
+		if parsed == nil {
+			return fmt.Errorf("invalid EcommPlatform value: %q", v)
+		}
+		*p = *parsed
+	case []byte:
+		parsed := e.Parse(string(v))
+		if parsed == nil {
+			return fmt.Errorf("invalid EcommPlatform value: %q", v)
+		}
+		*p = *parsed
+	default:
+		return fmt.Errorf("invalid EcommPlatform type: %T", v)
+	}
+	return nil
 }
 
 // iMember is the type constraint for Member used by Enum.
